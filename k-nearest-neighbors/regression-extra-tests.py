@@ -32,6 +32,8 @@ class Regression(object):
     Sets houses and values data
     :param houses: pandas.DataFrame with houses parameters
     :param values: pandas.Series with houses values
+    
+    #* Note: KDTree() method's alg has the general idea that  the kd-tree is a binary tree, each of whose nodes specifies an axis and splits the set of points based on whether their coordinate along that axis is > or < a particular value.
     """
     self.houses = houses
     self.values = values
@@ -42,8 +44,16 @@ class Regression(object):
     Calculates predicted value for house with particular parameters
     :param query_point: pandas.Series with house parameters
     :return: house value
+
+    #! Called on each row in the trained set, where the row is the argument that is passed in (in this test codes case :param query_point: = row)
+
+    #* value is set to run np.mean() on each of the data points in self.values.iloc[indexes] which had been set using the query_point parameter. If the mean of the given query_point is nan, then an exception is thrown, otherwise the mean (value) is returned.
     """
-    _, indexes = self.kdtree.query(query_point, self.k)
+
+    #* this is where the KDTree is queried using the specified value of k
+    #! added parameter p=1 to the method below to see changes if it uses the Manhattan distance as opposed to the euclidean dist, results of both are in plots folder.
+    #* Results: using p=1 (results in manhattan distance being used) the grouping of the min/max values per fold was more spread out beyond #folds=4 and as such in this case the default usage of a euclidean distance calc resulted in a better model.
+    _, indexes = self.kdtree.query(query_point, self.k, p=1)
     value = self.metric(self.values.iloc[indexes])
     if np.isnan(value):
       raise Exception('Unexpected result')
