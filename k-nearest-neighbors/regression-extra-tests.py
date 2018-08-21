@@ -50,8 +50,8 @@ class Regression(object):
     #* value is set to run np.mean() on each of the data points in self.values.iloc[indexes] which had been set using the query_point parameter. If the mean of the given query_point is nan, then an exception is thrown, otherwise the mean (value) is returned.
     """
 
-    #* this is where the KDTree is queried using the specified value of k
-    #! added parameter p=1 to the method below to see changes if it uses the Manhattan distance as opposed to the euclidean dist, results of both are in plots folder.
+    #* this is where the KDTree is queried using the specified value of k in method kdtree.query().
+    #! added parameter p=1 to the kdtree.query() method below to see changes if it uses the "Manhattan" distance as opposed to the euclidean dist, results of both are in plots folder (however both are minkowski dist calc as far as I can tell).
     #* Results: using p=1 (results in manhattan distance being used) the grouping of the min/max values per fold was more spread out beyond #folds=4 and as such in this case the default usage of a euclidean distance calc resulted in a better model.
     _, indexes = self.kdtree.query(query_point, self.k, p=1)
     value = self.metric(self.values.iloc[indexes])
