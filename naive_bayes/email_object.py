@@ -14,6 +14,7 @@ class EmailObject(object):
   """
   CLRF = "\n\r\n\r"
 
+  # TODO: Figure out what the category param is supposed to do.
   def __init__(self, infile, category=None):
     self.category = category
     if sys.version_info > (3, 0):
@@ -35,7 +36,9 @@ class EmailObject(object):
     Get message body
     :return: str in Py3, unicode in Py2
     """
+    #* Note: an email message consists of headers and payload (aka content), payload may be one of a simple text message, binary object or a structured sequence of sub-messages each with their own headers and payloads. (The latter is MIME type, such as multipart)
     payload = self.mail.get_payload()
+    #! If the email is a multipart type, it converts the payload into a list and iterates over the list to separate each part into an element in parts.
     if self.mail.is_multipart():
       parts = [self._single_body(part) for part in list(payload)]
     else:
@@ -44,6 +47,7 @@ class EmailObject(object):
     for part in parts:
       if len(part) == 0:
         continue
+      #! Handles parts which are of a byte instance by decoding them and appending to decoded_parts
       if isinstance(part, bytes):
         decoded_parts.append(part.decode('utf-8', errors='ignore'))
       else:
@@ -62,7 +66,7 @@ class EmailObject(object):
       body = part.get_payload(decode=True)
     except Exception:
       return ''
-
+    #! Handles the case where the body of an email is of the html type.
     if content_type == 'text/html':
       return BeautifulSoup(body, 'html.parser').text
     elif content_type == 'text/plain':
