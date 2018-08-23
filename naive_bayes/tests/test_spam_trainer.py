@@ -28,10 +28,12 @@ class TestSpamTrainer(unittest.TestCase):
 
     self.assertEqual(trainer.preference(), expected)
 
+  #! test for score(), since training data is uniform across the categories there is no reason for the score to differ across them.
   def test_probability_being_1_over_n(self):
     trainer = self.trainer
     scores = list(trainer.score(self.email).values())
 
+    #* compare first and last item in scores, assertAlmostEqual() used to ignore rounding errors? followed by comparing each nth element of scores with the n+1th element.
     self.assertAlmostEqual(scores[0], scores[-1])
 
     for i in range(len(scores) - 1):

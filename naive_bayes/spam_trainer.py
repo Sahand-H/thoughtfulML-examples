@@ -60,6 +60,8 @@ class SpamTrainer(object):
     """
     return self.totals[category]
 
+
+  #! Double for loop, for each category in self.to_train, the category is added to the set self.categories and for each unique token, the count is incremented in the dict self.training, self.totals[_all] and self.totals[category]. The field self.to_train is reset afterwards (set to {}).
   def train(self):
     for category, file in self.to_train:
       with io.open(file, 'rb') as eml_file:
@@ -80,6 +82,11 @@ class SpamTrainer(object):
     :param email: EmailObject
     :return: float number
     """
+    #! Method does the following:
+    #!    1: Trains the model if not already trained
+    #!    2: For each token of the blob of email, iterates through all categories and calculates the probability of the token being in that category.
+    #! End result is the Naive Bayesian Score of each without normalizing.
+
     self.train()
 
     cat_totals = self.totals
